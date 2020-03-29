@@ -30,8 +30,10 @@ defmodule GrovePi.DHT.DefaultTrigger do
   end
 
   def update(
-      <<new_temp, new_humidity, _config, _serial_id1, _serial_id2, _serial_id3, _manufacturer, _device_id, _>>,
+      <<temp_int, humidity_int, _config, _serial_id1, _serial_id2, _serial_id3, _manufacturer, _device_id, _>>,
       %{temp: temp, humidity: humidity} = state) do
+    new_temp = convert_to_celcius(temp_int)
+    new_humidity = convert_to_percent(humidity_int)
     {:changed, %{state | temp: new_temp, humidity: new_humidity}}
   end
 
@@ -41,5 +43,13 @@ defmodule GrovePi.DHT.DefaultTrigger do
 
   def update({new_temp, new_humidity}, state) do
     {:changed, %{state | temp: new_temp, humidity: new_humidity}}
+  end
+
+  defp convert_to_celcius(temp_int) do
+    (temp_int / 65536.0) * 165.0 - 40.0
+  end
+
+  defp convert_to_percent(humidity_int) do
+    (humidity_int / 65536.0) * 100.0
   end
 end
