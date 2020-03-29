@@ -29,6 +29,12 @@ defmodule GrovePi.DHT.DefaultTrigger do
     {:ok, %State{}}
   end
 
+  def update(
+      <<new_temp, new_humidity, _config, _serial_id1, _serial_id2, _serial_id3, _manufacturer, _device_id, _>>,
+      %{temp: temp, humidity: humidity} = state) do
+    {:changed, %{state | temp: new_temp, humidity: new_humidity}}
+  end
+
   def update({temp, humidity}, %{temp: temp, humidity: humidity} = state) do
     {:ok, state}
   end
